@@ -1,0 +1,243 @@
+; File generated automatically from ./rpcrt4.spec; do not edit!
+
+LIBRARY libtgmrpcrt4.dll
+
+EXPORTS
+  CreateProxyFromTypeInfo
+  CStdStubBuffer_AddRef
+  CStdStubBuffer_Connect
+  CStdStubBuffer_CountRefs
+  CStdStubBuffer_DebugServerQueryInterface
+  CStdStubBuffer_DebugServerRelease
+  CStdStubBuffer_Disconnect
+  CStdStubBuffer_Invoke
+  CStdStubBuffer_IsIIDSupported
+  CStdStubBuffer_QueryInterface
+  ;DceErrorInqTextA
+  ;DceErrorInqTextW
+  DllRegisterServer PRIVATE
+  IUnknown_AddRef_Proxy
+  IUnknown_QueryInterface_Proxy
+  IUnknown_Release_Proxy
+  I_RpcAllocate
+   
+  
+  I_RpcExceptionFilter
+  I_RpcFree
+  I_RpcFreeBuffer
+  I_RpcGetBuffer
+  
+  I_RpcMapWin32Status
+  I_RpcSendReceive
+  
+  MesDecodeBufferHandleCreate
+  MesDecodeIncrementalHandleCreate
+  MesEncodeFixedBufferHandleCreate
+  MesEncodeIncrementalHandleCreate
+  MesHandleFree
+  MesIncrementalHandleReset
+  NDRCContextBinding
+  NDRCContextMarshall
+  NDRCContextUnmarshall
+  ;NDRSContextMarshall2
+  ;NDRSContextMarshall
+  ;NDRSContextMarshallEx
+  ;NDRSContextUnmarshall2
+  ;NDRSContextUnmarshall
+  ;NDRSContextUnmarshallEx
+  NdrAllocate
+  NdrByteCountPointerBufferSize
+  NdrByteCountPointerFree
+  NdrByteCountPointerMarshall
+  NdrByteCountPointerUnmarshall
+  NdrCStdStubBuffer2_Release
+  NdrCStdStubBuffer_Release
+  NdrClearOutParameters
+  NdrClientCall2 
+  NdrClientCall=NdrClientCall2 
+  NdrClientContextMarshall
+  NdrClientContextUnmarshall
+  NdrClientInitializeNew
+  NdrComplexArrayBufferSize
+  NdrComplexArrayFree
+  NdrComplexArrayMarshall
+  NdrComplexArrayMemorySize
+  NdrComplexArrayUnmarshall
+  NdrComplexStructBufferSize
+  NdrComplexStructFree
+  NdrComplexStructMarshall
+  NdrComplexStructMemorySize
+  NdrComplexStructUnmarshall
+  NdrConformantArrayBufferSize
+  NdrConformantArrayFree
+  NdrConformantArrayMarshall
+  NdrConformantArrayMemorySize
+  NdrConformantArrayUnmarshall
+  NdrConformantStringBufferSize
+  NdrConformantStringMarshall
+  NdrConformantStringMemorySize
+  NdrConformantStringUnmarshall
+  NdrConformantStructBufferSize
+  NdrConformantStructFree
+  NdrConformantStructMarshall
+  NdrConformantStructMemorySize
+  NdrConformantStructUnmarshall
+  NdrConformantVaryingArrayBufferSize
+  NdrConformantVaryingArrayFree
+  NdrConformantVaryingArrayMarshall
+  NdrConformantVaryingArrayMemorySize
+  NdrConformantVaryingArrayUnmarshall
+  NdrConformantVaryingStructBufferSize
+  NdrConformantVaryingStructFree
+  NdrConformantVaryingStructMarshall
+  NdrConformantVaryingStructMemorySize
+  NdrConformantVaryingStructUnmarshall
+  
+  
+  NdrConvert2
+  NdrConvert
+  NdrCorrelationFree
+  NdrCorrelationInitialize
+  NdrCorrelationPass
+  NdrDllCanUnloadNow
+  NdrDllGetClassObject
+  NdrDllRegisterProxy
+  NdrDllUnregisterProxy
+  NdrEncapsulatedUnionBufferSize
+  NdrEncapsulatedUnionFree
+  NdrEncapsulatedUnionMarshall
+  NdrEncapsulatedUnionMemorySize
+  NdrEncapsulatedUnionUnmarshall
+  NdrFixedArrayBufferSize
+  NdrFixedArrayFree
+  NdrFixedArrayMarshall
+  NdrFixedArrayMemorySize
+  NdrFixedArrayUnmarshall
+  NdrFreeBuffer
+  NdrFullPointerFree
+  NdrFullPointerInsertRefId
+  NdrFullPointerQueryPointer
+  NdrFullPointerQueryRefId
+  NdrFullPointerXlatFree
+  NdrFullPointerXlatInit
+  NdrGetBuffer
+  NdrInterfacePointerBufferSize
+  NdrInterfacePointerFree
+  NdrInterfacePointerMarshall
+  NdrInterfacePointerMemorySize
+  NdrInterfacePointerUnmarshall
+  NdrMapCommAndFaultStatus
+  NdrMesProcEncodeDecode 
+  NdrNonConformantStringBufferSize
+  NdrNonConformantStringMarshall
+  NdrNonConformantStringMemorySize
+  NdrNonConformantStringUnmarshall
+  NdrNonEncapsulatedUnionBufferSize
+  NdrNonEncapsulatedUnionFree
+  NdrNonEncapsulatedUnionMarshall
+  NdrNonEncapsulatedUnionMemorySize
+  NdrNonEncapsulatedUnionUnmarshall
+  NdrOleAllocate
+  NdrOleFree
+  NdrPointerBufferSize
+  NdrPointerFree
+  NdrPointerMarshall
+  NdrPointerMemorySize
+  NdrPointerUnmarshall
+  NdrProxyErrorHandler
+  NdrProxyFreeBuffer
+  NdrProxyGetBuffer
+  NdrProxyInitialize
+  NdrProxySendReceive
+  NdrRangeUnmarshall
+  NdrSendReceive
+  NdrServerCall2
+  
+  
+    
+  NdrServerInitializeNew
+  NdrSimpleStructBufferSize
+  NdrSimpleStructFree
+  NdrSimpleStructMarshall
+  NdrSimpleStructMemorySize
+  NdrSimpleStructUnmarshall
+  NdrSimpleTypeMarshall
+  NdrSimpleTypeUnmarshall
+  NdrStubCall2
+  NdrStubForwardingFunction
+  NdrStubGetBuffer
+  NdrStubInitialize
+  NdrUserMarshalBufferSize
+  NdrUserMarshalFree
+  NdrUserMarshalMarshall
+  NdrUserMarshalMemorySize
+  NdrUserMarshalUnmarshall
+  NdrVaryingArrayBufferSize
+  NdrVaryingArrayFree
+  NdrVaryingArrayMarshall
+  NdrVaryingArrayMemorySize
+  NdrVaryingArrayUnmarshall
+  NdrXmitOrRepAsBufferSize
+  NdrXmitOrRepAsFree
+  NdrXmitOrRepAsMarshall
+  NdrXmitOrRepAsMemorySize
+  NdrXmitOrRepAsUnmarshall
+  RpcAbortAsyncCall=RpcAsyncAbortCall
+  RpcAsyncAbortCall
+  RpcAsyncCancelCall
+  RpcAsyncCompleteCall
+  RpcAsyncGetCallStatus
+  RpcAsyncInitializeHandle
+  RpcBindingCopy
+  RpcBindingFree
+  RpcBindingFromStringBindingA
+  RpcBindingFromStringBindingW
+  RpcBindingInqObject
+  ;RpcBindingReset
+  RpcBindingSetObject
+  
+  
+  RpcCancelAsyncCall=RpcAsyncCancelCall
+  ;RpcCancelThread
+  ;RpcCancelThreadEx
+  RpcCompleteAsyncCall=RpcAsyncCompleteCall
+  RpcErrorStartEnumeration
+  RpcGetAsyncCallStatus=RpcAsyncGetCallStatus
+  RpcInitializeAsyncHandle=RpcAsyncInitializeHandle
+   
+  RpcRaiseException
+  
+  RpcServerListen
+  RpcServerRegisterAuthInfoA
+  RpcServerRegisterAuthInfoW
+  RpcServerRegisterIf2
+  RpcServerRegisterIf
+  RpcServerRegisterIfEx
+  RpcServerUnregisterIf
+  RpcServerUnregisterIfEx
+  
+  
+  RpcServerUseProtseqEpW
+  RpcServerUseProtseqWithCallBackW
+  
+  RpcSmDestroyClientContext
+  RpcSsDestroyClientContext
+  RpcStringBindingComposeA
+  RpcStringBindingComposeW
+  RpcStringBindingParseA
+  RpcStringBindingParseW
+  RpcStringFreeA
+  RpcStringFreeW
+
+  UuidCompare
+  UuidCreate
+  UuidCreateNil
+  UuidCreateSequential
+  UuidEqual
+  UuidFromStringA
+  UuidFromStringW
+  UuidHash
+  UuidIsNil
+  UuidToStringA
+  UuidToStringW
+  

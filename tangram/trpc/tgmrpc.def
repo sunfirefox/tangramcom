@@ -1,0 +1,8 @@
+; File generated automatically from ./ole32.spec; do not edit!
+
+LIBRARY tgmrpc_com.dll
+
+EXPORTS
+  DllGetClassObject PRIVATE
+  DllRegisterServer PRIVATE
+  DllUnregisterServer PRIVATE

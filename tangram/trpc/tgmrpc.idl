@@ -1,0 +1,339 @@
+import "unknwn.idl";
+//import "OSBaseTypes.h";
+//#ifdef WIN32
+//typedef unsigned long   ULONG;
+//#else
+//typedef unsigned int    ULONG;
+//#endif
+
+
+cpp_quote("#define RPCCOM_E_REQUEST_EXEC_TIMEOUT  ((HRESULT)0x80040044L)	//执行请求超时，MTAPI_E_TIMEOUT")
+cpp_quote("#define RPCCOM_E_CONN_DISCONNECTED     ((HRESULT)0x80040601L)		//客户不存在或者已经异常断开，MTAPI_E_RPCCOM_CLIENT_CONN_NOT_EXIST")
+cpp_quote("#define RPCCOM_E_CONN_SEND_FAILED      ((HRESULT)0x80040602L)")
+cpp_quote("#define RPCCOM_E_CONN_INVALID          ((HRESULT)0x80040603L)")
+cpp_quote("#define RPCCOM_E_CONN_NO_PACKET        ((HRESULT)0x80040604L)")
+cpp_quote("#define RPCCOM_E_CONN_LISTENING        ((HRESULT)0x80040605L)")
+cpp_quote("#define RPCCOM_E_CONN_LISTEN_FAILED    ((HRESULT)0x80040606L)")
+cpp_quote("#define RPCCOM_E_CONN_ADDR_INUSE       ((HRESULT)0x80040607L)")
+cpp_quote("#define RPCCOM_E_SOCKET_INPROGRESS     ((HRESULT)0x80040608L)")
+cpp_quote("#define RPCCOM_E_CONN_ADDR_NOTAVAIL    ((HRESULT)0x80040609L)		//客户端地址无效。例如，connect函数地址参数为空")
+cpp_quote("#define RPCCOM_E_SOCKET_AGAIN          ((HRESULT)0x8004060bL)")	
+cpp_quote("#define RPCCOM_E_CONN_PIPE             ((HRESULT)0x8004060cL)")	
+cpp_quote("#define RPCBINGING_PROTSEQU_RPCCOM_TCP \"ipcp_tcp\" ")
+cpp_quote("#define RPCBINGING_PROTSEQU_RPCCOM_UNIX \"ipcp_unix\" ")
+cpp_quote("#define RPCBINGING_MAX_SIZE 128")
+cpp_quote("#define RPCCOM_INFINITE_TIMEOUT 200000	//!< 最长等待200秒 ")
+
+/*!
+* Rpc所有相关接口，不要求实现QueryInterface接口
+*
+*/
+
+/*
+|Client APP|	<----------------->   |Server APP|
+--------------------------------------------------
+|Client Rpc|	<----------------->	  |Server Rpc|
+*/
+
+
+
+/*!
+* 连接通知接口
+* 由被调用方(ServerRpc/ClientRpc)实现
+*/
+[
+    object,
+	local,
+    uuid(9BABEF25-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcConnectionNotifyObject:IUnknown
+{
+	//! 获取请求/通知序号
+	ULONG GetSequNo();
+
+	//!获取请求调用参数
+	const void* GetParamsPtr() =0;
+
+	//! 获取请求调用参数大小
+	ULONG GetParamsSize();
+}
+
+/*!
+* 连接请求接口
+* 由被调用方(ServerRpc/ClientRpc)实现
+*/
+[
+    object,
+	local,
+    uuid(9BABEF26-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcConnectionRequestObject:ITgmRpcConnectionNotifyObject
+{
+
+	/*!
+	* 发送成功的应答
+	* 注意,如果返回RPCCOM_E_CONN_DISCONNECTED,表示客户端可能已经异常断开
+	* 
+	*/
+	HRESULT SendReply([in]const void *inParamsPtr,[in]ULONG inParmsSize);
+
+	/*发送应答，不需要数据区*/
+	HRESULT SendResult([in]HRESULT inResult);
+}
+
+
+/*!连接异步请求结果
+* 由异步请求的调用方(ServerApp/ClientAPP)实现
+*
+*/
+[
+    object,
+	local,
+    uuid(9BABEF27-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcConnectionAsyncReqCallBack: IUnknown
+{
+
+	/*!
+	* 处理异步请求应答
+	*
+	*/
+	void On_Reply([in]HRESULT inResult, [in]const void* outParamsPtr,[in]ULONG outParamsSize,[in]ULONG inSeqNo,[in]ULONG inUserData);
+}
+
+/*!连接事件处理接口
+* 
+* 由ServerAPP/ClientAPP实现
+*/
+[
+    object,
+	local,
+    uuid(9BABEF28-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcConnectionEvent: IUnknown
+{
+
+	/*! 
+	*  本客户连接对象被创建
+	*  @param inSerNtyCBPtr 用以发送服务器事件的接口
+	*/
+	void On_Connected()	;
+
+	/*! 
+	*  本客户连接对象即将被销毁
+	*  
+	*/
+	void On_Disconnected()	;
+
+	/*!   
+	* 本客户连接对象异常断开 
+	*  
+	*/	
+	void On_DisconnectUnexpected();
+
+	/*! 
+	*  本客户连接对象收到Notify
+	*  
+	*/
+	void On_Notify([in]ITgmRpcConnectionNotifyObject *inNtyPtr)	;
+
+	/*! 
+	*  本客户连接对象收到Request
+	*  
+	*/
+	void On_Request([in]ITgmRpcConnectionRequestObject *inReqPtr)	;
+	
+}	
+
+typedef void (*ipc_client_memory_free_fun_t)(void* inMem);
+
+/*!连接操作接口
+* 
+* 由RpcCom实现
+*/
+[
+    object,
+	local,
+    uuid(9BABEF29-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcConnection: IUnknown
+{
+
+	/*! 断开连接 
+	*  
+	*  
+	*/
+	HRESULT Disconnect();
+
+	/*!
+	* 注册事件处理接口
+	* inIsSvrConn 为真时，表明此连接可以作为一个服务连接，接受对端请求和服务。
+	* inEventHandler的On_Notify和On_Request方法至少一个是有意义的。
+	*/
+	HRESULT Advise([in]ITgmRpcConnectionEvent * inEventHandler,[in]ULONG inIsSvrConn);
+
+	/*!取消注册事件处理接口
+	* 
+	*
+	*/
+	HRESULT Unadvise();
+
+
+	/*! 同步方法调用  
+	*  当调用返回时，将直接填充各个输出参数。
+	*/
+	HRESULT SendSyncRequest([in]const void *inParamsPtr,[in]ULONG inParmsSize,
+		[out]void *outParamsPtr/* = NULL*/,[in]ULONG outParamsSize/**/,[out]ULONG *outParamsLenPtr/* = NULL*/,
+		[in]ULONG inTimeOut /*= RpcCOM_INFINITE_TIMEOUT*/);
+
+	/*! 同步方法调用  
+	*  当调用返回时，由RpcCom分配内存并返回结果，用户需要调用free_result_mem来释放返回的内存。
+	*/
+	HRESULT SendSyncRequestEx([in]const void *inParamsPtr,[in]ULONG inParmsSize,
+		[out]void **outParamsPtr/* = NULL*/,[out]ULONG *outParamsLenPtr/* = NULL*/,[out]ipc_client_memory_free_fun_t * free_result_mem,
+		[in]ULONG inTimeOut /*= RpcCOM_INFINITE_TIMEOUT*/);
+
+	/*! 异步方法调用
+	*  当请求发送成功或者失败，调用立刻返回。
+	*  当服务器端执行完相应的请求，调用指定的回调接口
+	*/
+	HRESULT SendAsyncRequest([in]const void *inParamsPtr,[in]ULONG inParmsSize,
+		[in]ITgmRpcConnectionAsyncReqCallBack *inCallback /*= NULL*/,
+		[out]ULONG *outReqNo/* = NULL*/,
+		[in]ULONG inUserData/**/,
+		[in]ULONG inTimeOut/* = RpcCOM_INFINITE_TIMEOUT*/);
+
+	/*! 通知
+	*/
+	HRESULT SendNotify([in]const void *inParamsPtr,[in]ULONG inParmsSize);
+
+	/*!获取ResourceLocation
+	* 
+	*
+	*/
+	HRESULT GetResourceLocation([in]char* outBindString,[in]ULONG inBingStringSize);
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+// Rpc客户组件接口                                                         
+//////////////////////////////////////////////////////////////////////////
+
+
+
+/*!Rpc客户组件
+ * 由ClientRpc实现
+ *
+ */
+ [
+    object,
+	local,
+    uuid(9BABEF2A-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcClient: ITgmRpcConnection{
+
+	/*! 连接 
+	*  
+	*  
+	*/
+	HRESULT Connect();
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//Rpc 服务组件接口
+//////////////////////////////////////////////////////////////////////////
+
+/*!Rpc 服务器事件处理接口
+ * 
+ * 由ServerAPP实现
+ */
+[
+    object,
+	local,
+    uuid(9BABEF2B-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcServerEvent: IUnknown
+{
+
+	/*!
+	*　处理请求：创建客户连接对象。
+	*　ppOutCliObj返回客户创建的新客户连接对象
+	*/
+	HRESULT  On_ClientConnection_Created([out]ITgmRpcConnection *ppOutCliObj);
+}	
+
+
+/*!Rpc 服务器组件
+* 
+* 由ServerRpc实现
+*/
+[
+    object,
+	local,
+    uuid(9BABEF2C-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcServer: IUnknown
+{
+
+	/*! 开始监听客户请求
+	*  
+	*  @param[in] in_listenCh下行通道
+	*/
+	HRESULT Listen(/*const OLECHAR *in_listenCh*/);
+
+	/*! 停止监听
+	*  
+	*  
+	*/
+	HRESULT Close();
+
+	/*!
+	* 关闭所有客户连接对象
+	*
+	*/
+	HRESULT DisconnectAll();
+
+
+	/*!
+	 * 注册事件处理接口
+	 *
+	 */
+	HRESULT Advise([in]ITgmRpcServerEvent * inEventHandler);
+
+	/*!取消注册事件处理接口
+	 * 
+	 *
+	 */
+	HRESULT Unadvise();
+
+	/*!获取Endpoint信息
+	* 
+	*
+	*/
+	HRESULT GetResourceLocation([out,size_is(inBingStringSize)]char* outBindString,[in]ULONG inBingStringSize);
+}	
+
+[
+    object,
+	local,
+    uuid(9BABEF2D-8B75-4e14-83A3-E4E599EAFD68)
+]
+interface ITgmRpcFactory: IUnknown
+{
+	HRESULT CreateRpcServer([out]ITgmRpcServer **ppOutIf,[in,string]const char * bindString);
+	
+	HRESULT CreateRpcClient([out]ITgmRpcClient **ppOutIf,[in,string]const char * bindString);
+}
+
+[
+    uuid(1E7D0791-0359-43af-8312-94D1539BF168)
+]
+coclass TangramRpcCOMLib
+{
+    interface ITgmRpcFactory;
+}

@@ -1,0 +1,40 @@
+import "objidl.idl";
+
+interface ITalkSessionEvents;
+
+[
+	uuid(A7CCBB08-7D0B-4318-BAE6-4BCC8AB30CA7),
+	object
+]
+interface ITalkSession : IUnknown
+{
+	HRESULT Say([in, string] const OLECHAR *pwszStatement);
+	HRESULT Advise([in] ITalkSessionEvents *pEventSink,[out] DWORD *pdwReg);
+	HRESULT Unadvise([in] DWORD dwReg);
+}
+
+[
+	uuid(A7CCBB09-7D0B-4318-BAE6-4BCC8AB30CA7),
+	object
+]
+interface ITalkSessionEvents : IUnknown
+{
+	HRESULT OnStatement([in, string] const OLECHAR *pwszUser,[in, string] const OLECHAR *pwszStmnt);
+}
+
+[
+	uuid(A7CCBB0A-7D0B-4318-BAE6-4BCC8AB30CA7),
+	object
+]
+interface ITalkSessionManager : IUnknown
+{
+	HRESULT CreateSession([out] ITalkSession **ppts);
+}
+
+[
+    uuid(A7CCBB0F-7D0B-4318-BAE6-4BCC8AB30CA7)
+]
+coclass TalkToStranger
+{
+    interface ITalkSessionManager;
+};

@@ -1,0 +1,83 @@
+/*
+ *
+ * @APPLE_LICENSE_HEADER_START@
+ * 
+ * Copyright (c) 1999-2003 Apple Computer, Inc.  All Rights Reserved.
+ * 
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this
+ * file.
+ * 
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+ * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
+ * 
+ * @APPLE_LICENSE_HEADER_END@
+ *
+ */
+/*
+    File:       OSCond.h
+
+    Contains:   A simple condition variable abstraction
+
+
+    
+ 
+        
+*/
+/*
+ *	History:
+ *		2009/04/01	Jokul for Tranzda
+ *			add TGMCOMUTI_API declare
+ */
+
+#ifndef _OSCOND_H_
+#define _OSCOND_H_
+
+#include "OSConfigure.h"
+
+#ifndef __Win32__
+    #if __PTHREADS_MUTEXES__
+        #include <pthread.h>
+    #else
+        #include "mycondition.h"
+    #endif
+#endif
+
+#include "OSMutex.h"
+#include "MyAssert.h"
+
+class TGMCOMUTI_API OSCond 
+{
+    public:
+
+        OSCond();
+        ~OSCond();
+        
+        void     Signal();
+        void     Wait(OSMutex* inMutex, SInt32 inTimeoutInMilSecs = 0);
+        void     Broadcast();
+
+    private:
+
+#ifdef __Win32__
+        HANDLE              fCondition;
+        UInt32              fWaitCount;
+#elif __PTHREADS_MUTEXES__
+        pthread_cond_t      fCondition;
+        void                TimedWait(OSMutex* inMutex, SInt32 inTimeoutInMilSecs);
+#else
+        mycondition_t       fCondition;
+#endif
+};
+
+
+
+#endif //_OSCOND_H_

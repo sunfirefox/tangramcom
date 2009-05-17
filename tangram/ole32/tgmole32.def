@@ -1,0 +1,188 @@
+; File generated automatically from ./ole32.spec; do not edit!
+
+LIBRARY libtgmole32.dll
+
+EXPORTS
+  ;BindMoniker
+
+  CLSIDFromProgID
+  CLSIDFromString
+  CoAddRefServerProcess
+  ;CoAllowSetForegroundWindow
+  CoBuildVersion
+  CoCopyProxy
+  CoCreateFreeThreadedMarshaler
+  CoCreateGuid
+  CoCreateInstance
+  CoCreateInstanceEx
+  CoDisconnectObject
+  ;CoDosDateTimeToFileTime=kernel32.DosDateTimeToFileTime 
+  ;CoFileTimeNow
+  ;CoFileTimeToDosDateTime=kernel32.FileTimeToDosDateTime 
+  CoFreeAllLibraries
+  ;CoFreeLibrary
+  CoFreeUnusedLibraries
+  CoFreeUnusedLibrariesEx
+  CoGetCallContext
+  CoGetClassObject
+  ;CoGetContextToken
+  ;CoGetCurrentProcess
+  CoGetInterfaceAndReleaseStream
+  CoGetMalloc
+  CoGetMarshalSizeMax
+  ;CoGetObject
+;CoGetObjectContext
+  CoGetPSClsid
+  CoGetStandardMarshal
+  CoGetState
+  CoGetTreatAsClass
+  CoImpersonateClient
+  CoInitialize
+  CoInitializeEx
+  CoInitializeSecurity
+  CoInitializeWOW
+  CoIsHandlerConnected
+  ;CoIsOle1Class
+ ;CoLoadLibrary
+  CoLockObjectExternal
+  CoMarshalHresult
+  ;CoMarshalInterThreadInterfaceInStream
+  CoMarshalInterface
+  CoQueryClientBlanket
+  CoQueryProxyBlanket
+  ;CoRegisterChannelHook
+  CoRegisterClassObject
+  CoRegisterMallocSpy
+  CoRegisterMessageFilter
+  CoRegisterPSClsid
+  CoReleaseMarshalData
+  CoReleaseServerProcess
+  CoResumeClassObjects
+  CoRevertToSelf
+  CoRevokeClassObject
+  CoRevokeMallocSpy
+  CoSetProxyBlanket
+  CoSetState
+  CoSuspendClassObjects
+  CoTaskMemAlloc
+  CoTaskMemFree
+  CoTaskMemRealloc
+  CoTreatAsClass
+  CoUninitialize
+  CoUnmarshalHresult
+  CoUnmarshalInterface
+  ;CoWaitForMultipleHandles
+  ;CreateAntiMoniker
+  CreateBindCtx
+  ;CreateClassMoniker
+  ;CreateDataAdviseHolder
+  ;CreateDataCache
+  CreateErrorInfo
+  ;CreateFileMoniker
+  ;CreateGenericComposite
+  ;CreateILockBytesOnHGlobal
+  ;CreateItemMoniker
+  ;CreateOleAdviseHolder
+  ;CreatePointerMoniker
+  CreateStreamOnHGlobal
+  ;;ole32 DllDebugObjectRPCHook
+  DllGetClassObject PRIVATE
+  DllRegisterServer PRIVATE
+  DllUnregisterServer PRIVATE
+  ;;ole2 DoDragDrop
+  ;;ole2 FmtIdToPropStgName
+  ;;ole2 FreePropVariantArray
+  ;GetClassFile
+  ;GetConvertStg
+  GetErrorInfo
+  ;GetHGlobalFromILockBytes
+  GetHGlobalFromStream
+  GetRunningObjectTable
+
+  IIDFromString=CLSIDFromString
+  ;;ole2 IsAccelerator
+  IsEqualGUID
+  ;IsValidInterface
+  MkParseDisplayName
+  ;MonikerCommonPrefixWith
+  ;;ole2 OleBuildVersion
+  ;;ole2 OleConvertIStorageToOLESTREAM
+  ;;ole2 OleConvertOLESTREAMToIStorage
+  ;;ole2 OleCreate
+  ;;ole2 OleCreateDefaultHandler
+  ;;ole2 OleCreateFromData
+  ;;ole2 OleCreateFromFile
+  ;;ole2 OleCreateLink
+  ;;ole2 OleCreateLinkFromData
+  ;;ole2 OleCreateLinkToFile
+  ;;ole2 OleCreateMenuDescriptor
+  ;;ole2 OleCreateStaticFromData
+  ;;ole2 OleDestroyMenuDescriptor
+  ;;ole2 OleDoAutoConvert
+  ;;ole2 OleDraw
+  ;OleDuplicateData
+  ;;clipboard OleFlushClipboard
+  ;;ole2 OleGetAutoConvert
+  ;;clipboard OleGetClipboard
+  ;OleGetIconOfClass
+  ;;ole2 OleInitialize
+  ;;ole2 OleInitializeWOW
+  ;;clipboard OleIsCurrentClipboard
+  ;;ole2 OleIsRunning
+  ;;ole2 OleLoad
+  ;OleLoadFromStream
+  ;;ole2 OleLockRunning
+  ;OleMetafilePictFromIconAndLabel
+  ;;ole2 OleNoteObjectVisible
+  ;;ole2 OleQueryCreateFromData
+  ;;ole2 OleQueryLinkFromData
+  ;OleRegEnumFormatEtc
+  ;;ole2 OleRegEnumVerbs
+  ;;ole2 OleRegGetMiscStatus
+  ;;ole2 OleRegGetUserType
+  ;;ole2 OleRun
+  ;;ole2 OleSave
+  ;OleSaveToStream
+  ;;ole2 OleSetAutoConvert
+  ;;clipboard OleSetClipboard
+  ;;ole2 OleSetContainedObject
+  ;;ole2 OleSetMenuDescriptor
+  ;;ole2 OleTranslateAccelerator
+  ;;ole2 OleUninitialize
+  ProgIDFromCLSID
+  ;PropStgNameToFmtId
+  ;;ole2 PropSysAllocString
+  ;;ole2 PropSysFreeString
+  ;;ole2 PropVariantClear
+  ;;ole2 PropVariantCopy
+  ;ReadClassStg
+  ;ReadClassStm
+  ;ReadFmtUserTypeStg
+  ;;ole2 RegisterDragDrop
+  ;;ole2 ReleaseStgMedium
+  ;;ole2 RevokeDragDrop
+  ;SNB_UserFree
+  ;SNB_UserMarshal
+  ;SNB_UserSize
+  ;SNB_UserUnmarshal
+  ;STGMEDIUM_UserFree
+  ;STGMEDIUM_UserMarshal
+  ;STGMEDIUM_UserSize
+  ;STGMEDIUM_UserUnmarshal
+  ;SetConvertStg
+  SetErrorInfo
+  ;StgCreateDocfile
+  ;StgCreateDocfileOnILockBytes
+  ;StgCreatePropSetStg
+  ;StgCreateStorageEx
+ ; StgIsStorageFile
+  ;StgIsStorageILockBytes
+  ;StgOpenStorage
+  ;StgOpenStorageEx
+  ;StgOpenStorageOnILockBytes
+  ;StgSetTimes
+  StringFromCLSID
+  StringFromGUID2
+  StringFromIID=StringFromCLSID
+  
+

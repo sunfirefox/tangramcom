@@ -1,0 +1,27 @@
+import "objidl.idl";
+
+
+/*****************************************************************************
+ * IServiceProvider interface
+ */
+[
+    object,
+    uuid(7d5140c1-7436-11ce-8034-00aa006009fa),
+    pointer_default(unique)
+]
+interface IMyServiceProvider : IUnknown
+{
+    HRESULT TestService([out]IUnknown  ** ppvObject);
+    
+    HRESULT QueryService(
+        [in] REFGUID guidService,
+        [in] REFIID riid,
+        [out]IUnknown  ** ppvObject);
+
+    HRESULT RemoteQueryService(
+        [in] REFGUID guidService,
+        [in] REFIID riid,
+        [out, iid_is(riid)] IUnknown ** ppvObject);
+}
+
+

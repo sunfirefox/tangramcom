@@ -1,0 +1,998 @@
+EXTRADEFS = -D_RPCRT4_ -DCOM_NO_WINDOWS_H -DMSWMSG
+TOPSRCDIR = ../..
+TOPOBJDIR = ../..
+SRCDIR    = .
+
+MODULE    = rpcrt4.dll
+IMPORTLIB = rpcrt4
+IMPORTS   = uuid iphlpapi advapi32 kernel32 ntdll
+DELAYIMPORTS = secur32 user32
+
+C_SRCS = \
+	cproxy.c \
+	cpsf.c \
+	cstub.c \
+	ndr_clientserver.c \
+	ndr_contexthandle.c \
+	ndr_es.c \
+	ndr_fullpointer.c \
+	ndr_marshall.c \
+	ndr_ole.c \
+	ndr_stubless.c \
+	rpc_assoc.c \
+	rpc_async.c \
+	rpc_binding.c \
+	rpc_epmap.c \
+	rpc_message.c \
+	rpc_server.c \
+	rpc_transport.c \
+	rpcrt4_main.c
+
+RC_SRCS = version.rc
+
+IDL_C_SRCS = \
+	epm.idl
+
+# Global rules for building dlls     -*-Makefile-*-
+#
+# Each individual makefile should define the following variables:
+# MODULE       : name of the main module being built
+# EXTRALIBS    : extra libraries to link in (optional)
+# SPEC_SRCS16  : interface definition files for 16-bit dlls (optional)
+#
+# plus all variables required by the global Make.rules.in
+#
+
+DLLFLAGS    = -D_REENTRANT -fPIC
+DLLEXT      = .so
+IMPLIBEXT   = def
+MINGWAR     = false
+DEFS        = -D__WINESRC__ $(EXTRADEFS)
+BASEMODULE  = $(MODULE:%.dll=%)
+MAINSPEC    = $(BASEMODULE).spec
+SPEC_DEF    = $(BASEMODULE).def
+WIN16_FILES = $(SPEC_SRCS16:.spec=.spec.o) $(C_SRCS16:.c=.o) $(EXTRA_OBJS16)
+ALL_OBJS    = $(WIN16_FILES) $(OBJS) $(RC_SRCS:.rc=.res)
+ALL_LIBS    = $(EXTRALIBS) $(LIBPORT) $(LDFLAGS) $(LIBS)
+IMPLIB_OBJS = $(IMPLIB_SRCS:.c=.o)
+IMPORTLIBFILE = $(IMPORTLIB:%=lib%.$(IMPLIBEXT))
+STATICIMPLIB  = $(IMPORTLIBFILE:.def=.def.a)
+DLL_LDPATH  = -L$(DLLDIR) $(DELAYIMPORTS:%=-L$(DLLDIR)/%) $(IMPORTS:%=-L$(DLLDIR)/%)
+INSTALLDIRS = $(DESTDIR)$(dlldir) $(DESTDIR)$(datadir)/wine
+
+all: $(MODULE)$(DLLEXT) $(SUBDIRS)
+
+# Global rules shared by all makefiles     -*-Makefile-*-
+#
+# Each individual makefile must define the following variables:
+# TOPSRCDIR    : top-level source directory
+# TOPOBJDIR    : top-level object directory
+# SRCDIR       : source directory for this module
+# MODULE       : name of the module being built
+#
+# Each individual makefile may define the following additional variables:
+# C_SRCS       : C sources for the module
+# C_SRCS16     : 16-bit C sources for the module
+# RC_SRCS      : resource source files
+# EXTRA_SRCS   : extra source files for make depend
+# EXTRA_OBJS   : extra object files
+# IMPORTS      : dlls to import
+# DELAYIMPORTS : dlls to import in delayed mode
+# SUBDIRS      : subdirectories that contain a Makefile
+# EXTRASUBDIRS : subdirectories that do not contain a Makefile
+# INSTALLSUBDIRS : subdirectories to run make install/uninstall into
+# MODCFLAGS    : extra CFLAGS for this module
+
+# First some useful definitions
+
+SHELL     = /bin/sh
+CC        = gcc
+CFLAGS    = -g -O2
+CPPFLAGS  = 
+LIBS      = 
+BISON     = bison
+FLEX      = flex
+EXEEXT    = 
+OBJEXT    = o
+LIBEXT    = so
+DLLEXT    = .so
+IMPLIBEXT = def
+LDSHARED  = $(CC) -shared $(SONAME:%=-Wl,-soname,%) $(VERSCRIPT:%=-Wl,--version-script=%)
+DLLTOOL   = false
+DLLWRAP   = 
+AR        = ar
+ARFLAGS   = rc
+RANLIB    = ranlib
+STRIP     = strip
+WINDRES   = false
+LN        = ln
+LN_S      = ln -s
+TOOLSDIR  = $(TOPOBJDIR)
+AS        = as
+LD        = ld
+NM        = nm
+LDFLAGS   = 
+PRELINK   = false
+RM        = rm -f
+MV        = mv
+LINT      = 
+LINTFLAGS = 
+FONTFORGE = false
+RSVG      = false
+ICOTOOL   = false
+INCLUDES     = -I$(SRCDIR) -I. -I$(TOPSRCDIR)/include -I$(TOPOBJDIR)/include $(EXTRAINCL)
+EXTRACFLAGS  = -Wall -pipe -fno-strict-aliasing -Wdeclaration-after-statement -Wwrite-strings -Wtype-limits -Wpointer-arith
+ALLCFLAGS    = $(INCLUDES) $(DEFS) $(DLLFLAGS) $(EXTRACFLAGS) $(CPPFLAGS) $(CFLAGS) $(MODCFLAGS)
+ALLLINTFLAGS = $(INCLUDES) $(DEFS) $(LINTFLAGS)
+IDLFLAGS     = $(INCLUDES) $(DEFS) $(EXTRAIDLFLAGS)
+WINEBUILDFLAGS = $(DLLFLAGS) --as-cmd "$(AS)"
+MKINSTALLDIRS= $(TOPSRCDIR)/tools/mkinstalldirs -m 755
+WINAPI_CHECK = $(TOPSRCDIR)/tools/winapi/winapi_check
+WINEWRAPPER  = $(TOPSRCDIR)/tools/winewrapper
+C2MAN        = $(TOPSRCDIR)/tools/c2man.pl
+RUNTEST      = $(TOPSRCDIR)/tools/runtest
+WINEBUILD    = $(TOOLSDIR)/tools/winebuild/winebuild
+MAKEDEP      = $(TOOLSDIR)/tools/makedep
+MAKECTESTS   = $(TOOLSDIR)/tools/make_ctests
+WRC          = $(TOOLSDIR)/tools/wrc/wrc
+WMC          = $(TOOLSDIR)/tools/wmc/wmc
+WIDL         = $(TOOLSDIR)/tools/widl/widl
+WINEGCC      = $(TOOLSDIR)/tools/winegcc/winegcc
+RELPATH      = $(TOOLSDIR)/tools/relpath
+SFNT2FNT     = $(TOOLSDIR)/tools/sfnt2fnt
+FNT2FON      = $(TOOLSDIR)/tools/fnt2fon
+RC           = $(WRC)
+RC16         = $(WRC)
+RCFLAGS      = --nostdinc $(INCLUDES) $(DEFS) $(EXTRARCFLAGS)
+RC16FLAGS    = -O res16 $(RCFLAGS)
+LDPATH       = 
+DLLDIR       = $(TOPOBJDIR)/dlls
+LIBPORT      = $(TOPOBJDIR)/libs/port/libwine_port.a
+LIBWPP       = $(TOPOBJDIR)/libs/wpp/libwpp.a
+LIBWINE      = -L$(TOPOBJDIR)/libs/wine -lwine
+LDRPATH_INSTALL = -Wl,--rpath,\$$ORIGIN/`$(RELPATH) $(bindir) $(libdir)` -Wl,--enable-new-dtags
+LDRPATH_LOCAL   = -Wl,--rpath,\$$ORIGIN/$(TOPOBJDIR)/libs/wine
+
+
+
+# Installation infos
+
+INSTALL         = /usr/bin/install -c $(INSTALL_FLAGS)
+INSTALL_PROGRAM = ${INSTALL} $(INSTALL_PROGRAM_FLAGS)
+INSTALL_SCRIPT  = ${INSTALL} $(INSTALL_SCRIPT_FLAGS)
+INSTALL_DATA    = ${INSTALL} -m 644 $(INSTALL_DATA_FLAGS)
+prefix          = /usr/local
+exec_prefix     = ${prefix}
+bindir          = ${exec_prefix}/bin
+libdir          = ${exec_prefix}/lib
+datarootdir     = ${prefix}/share
+datadir         = ${datarootdir}
+infodir         = ${datarootdir}/info
+mandir          = ${datarootdir}/man
+sysconfdir      = ${prefix}/etc
+includedir      = ${prefix}/include/wine
+dlldir          = ${exec_prefix}/lib/wine
+prog_manext     = 1
+api_manext      = 3w
+conf_manext     = 5
+CLEAN_FILES     = *.o *.a *.so *.ln *.res *.$(LIBEXT) \\\#*\\\# *~ *% .\\\#* *.bak *.orig *.rej *.flc core
+
+IDL_GEN_C_SRCS  = $(IDL_C_SRCS:.idl=_c.c) $(IDL_I_SRCS:.idl=_i.c) \
+                  $(IDL_P_SRCS:.idl=_p.c) $(IDL_S_SRCS:.idl=_s.c)
+IDL_GEN_HEADERS = $(IDL_H_SRCS:.idl=.h) $(IDL_C_SRCS:.idl=.h) $(IDL_I_SRCS:.idl=.h) \
+                  $(IDL_P_SRCS:.idl=.h) $(IDL_S_SRCS:.idl=.h)
+
+CLEAN_TARGETS = $(IDL_GEN_C_SRCS) $(IDL_GEN_HEADERS) $(IDL_TLB_SRCS:.idl=.tlb) $(IDL_P_SRCS:%=dlldata.c) \
+                $(BISON_SRCS:.y=.tab.c) $(BISON_SRCS:.y=.tab.h) $(LEX_SRCS:.l=.yy.c) $(MC_SRCS:.mc=.mc.rc)
+
+OBJS = $(C_SRCS:.c=.o) $(BISON_SRCS:.y=.tab.o) $(LEX_SRCS:.l=.yy.o) $(IDL_GEN_C_SRCS:.c=.o) $(EXTRA_OBJS)
+
+RCOBJS = $(RC_SRCS:.rc=.res.o)
+LINTS  = $(C_SRCS:.c=.ln)
+
+# 'all' target first in case the enclosing Makefile didn't define any target
+
+all:
+
+filter: dummy
+	@$(TOPSRCDIR)/tools/winapi/make_filter --make $(MAKE) all
+
+.PHONY: all filter
+
+# Implicit rules
+
+.SUFFIXES: .mc .rc .mc.rc .res .res.o .spec .spec.o .idl .tlb .h .y .l .tab.c .tab.h .yy.c .ok .man.in .man _c.c _i.c _p.c _s.c # .sfd .ttf .svg .ico
+
+.c.o:
+	$(CC) -c $(ALLCFLAGS) -o $@ $<
+
+.s.o:
+	$(AS) -o $@ $<
+
+.y.tab.c:
+	$(BISON) $(BISONFLAGS) -p $*_ -o $@ $<
+
+.y.tab.h:
+	$(BISON) $(BISONFLAGS) -p $*_ -o $*.tab.c -d $<
+
+.l.yy.c:
+	$(FLEX) $(LEXFLAGS) -o$@ $<
+
+.mc.mc.rc:
+	$(LDPATH) $(WMC) -i -U -H /dev/null -o $@ $<
+
+.rc.res:
+	$(LDPATH) $(RC) $(RCFLAGS) -fo$@ $<
+
+.res.res.o:
+	$(WINDRES) -i $< -o $@
+
+.spec.spec.o:
+	$(WINEBUILD) $(WINEBUILDFLAGS) --dll -o $@ --main-module $(MODULE) --export $<
+
+.idl.h:
+	$(WIDL) $(IDLFLAGS) -h -H $@ $<
+
+.idl_c.c:
+	$(WIDL) $(IDLFLAGS) -c -C $@ $<
+
+.idl_i.c:
+	$(WIDL) $(IDLFLAGS) -u -U $@ $<
+
+.idl_p.c:
+	$(WIDL) $(IDLFLAGS) -p -P $@ $<
+
+.idl_s.c:
+	$(WIDL) $(IDLFLAGS) -s -S $@ $<
+
+.idl.tlb:
+	$(WIDL) $(IDLFLAGS) -t -T $@ $<
+
+.c.ln:
+	$(LINT) -c $(ALLLINTFLAGS) $< || ( $(RM) $@ && exit 1 )
+
+.c.ok:
+	$(RUNTEST) $(RUNTESTFLAGS) $< && touch $@
+
+.sfd.ttf:
+	$(FONTFORGE) -script $(TOPSRCDIR)/fonts/genttf.ff $< $@
+
+.man.in.man:
+	LC_ALL=C sed -e 's,@bindir\@,$(bindir),g' -e 's,@dlldir\@,$(dlldir),g' -e 's,@PACKAGE_STRING\@,Wine 1.1.6,g' $< >$@ || ($(RM) $@ && false)
+
+.svg.ico:
+	$(RSVG) -w 16 -h 16 -f png $< $*-16.png
+	$(RSVG) -w 32 -h 32 -f png $< $*-32.png
+	$(RSVG) -w 48 -h 48 -f png $< $*-48.png
+	$(ICOTOOL) -c -o $@ $*-16.png $*-32.png $*-48.png
+	$(RM) $*-16.png $*-32.png $*-48.png
+
+# Rules for IDL files
+
+dlldata.c: $(WIDL) Makefile.in
+	$(WIDL) $(IDLFLAGS) --dlldata-only --dlldata=$@ $(IDL_P_SRCS)
+
+# Rule for linting
+
+$(MODULE).ln : $(LINTS)
+	if test "$(LINTS)" ; \
+	then \
+		$(LINT) $(ALLLINTFLAGS) -o$(MODULE) $(LINTS) ; \
+	        $(MV) llib-l$(MODULE).ln $(MODULE).ln ; \
+	else \
+		$(LINT) $(ALLLINTFLAGS) -C$(MODULE) /dev/null ; \
+	fi
+
+lint:: $(MODULE).ln
+
+# Rules for Windows API checking
+
+winapi_check:: dummy
+	$(WINAPI_CHECK) $(WINAPI_CHECK_FLAGS) $(WINAPI_CHECK_EXTRA_FLAGS) .
+
+.PHONY: winapi_check
+
+# Rules for dependencies
+
+DEPEND_SRCS = $(C_SRCS) $(C_SRCS16) $(RC_SRCS) $(RC_SRCS16) $(MC_SRCS) \
+              $(IDL_H_SRCS) $(IDL_C_SRCS) $(IDL_I_SRCS) $(IDL_P_SRCS) $(IDL_S_SRCS) \
+              $(IDL_GEN_C_SRCS) $(IDL_TLB_SRCS) $(IDL_TLB_SRCS:.idl=.tlb) \
+              $(BISON_SRCS) $(LEX_SRCS) $(EXTRA_SRCS)
+
+$(SUBDIRS:%=%/__depend__): dummy
+	@cd `dirname $@` && $(MAKE) depend
+
+depend: $(SUBDIRS:%=%/__depend__) dummy
+	$(MAKEDEP) -C$(SRCDIR) -S$(TOPSRCDIR) -T$(TOPOBJDIR) $(EXTRAINCL) $(DEPEND_SRCS)
+
+.PHONY: depend $(SUBDIRS:%=%/__depend__)
+
+# Rules for cleaning
+
+$(SUBDIRS:%=%/__clean__): dummy
+	@cd `dirname $@` && $(MAKE) clean
+
+$(EXTRASUBDIRS:%=%/__clean__): dummy
+	-cd `dirname $@` && $(RM) $(CLEAN_FILES)
+
+clean:: $(SUBDIRS:%=%/__clean__) $(EXTRASUBDIRS:%=%/__clean__)
+	$(RM) $(CLEAN_FILES) $(CLEAN_TARGETS) $(PROGRAMS) $(MANPAGES)
+
+.PHONY: clean $(SUBDIRS:%=%/__clean__) $(EXTRASUBDIRS:%=%/__clean__)
+
+# Rules for installing
+
+$(SUBDIRS:%=%/__install__): dummy
+	@cd `dirname $@` && $(MAKE) install
+
+$(SUBDIRS:%=%/__install-lib__): dummy
+	@cd `dirname $@` && $(MAKE) install-lib
+
+$(SUBDIRS:%=%/__install-dev__): dummy
+	@cd `dirname $@` && $(MAKE) install-dev
+
+$(SUBDIRS:%=%/__uninstall__): dummy
+	@cd `dirname $@` && $(MAKE) uninstall
+
+install:: $(INSTALLSUBDIRS:%=%/__install__)
+install-lib:: $(INSTALLSUBDIRS:%=%/__install-lib__)
+install-dev:: $(INSTALLSUBDIRS:%=%/__install-dev__)
+uninstall:: $(INSTALLSUBDIRS:%=%/__uninstall__)
+
+$(INSTALLDIRS):
+	$(MKINSTALLDIRS) $@
+
+.PHONY: install install-lib install-dev uninstall \
+	$(SUBDIRS:%=%/__install__) $(SUBDIRS:%=%/__uninstall__) \
+	$(SUBDIRS:%=%/__install-lib__) $(SUBDIRS:%=%/__install-dev__)
+
+# Rules for testing
+
+$(TESTSUBDIRS:%=%/__test__): dummy
+	@cd `dirname $@` && $(MAKE) test
+
+$(TESTSUBDIRS:%=%/__crosstest__): dummy
+	@cd `dirname $@` && $(MAKE) crosstest
+
+$(TESTSUBDIRS:%=%/__testclean__): dummy
+	@cd `dirname $@` && $(MAKE) testclean
+
+check test:: $(TESTSUBDIRS:%=%/__test__)
+
+crosstest:: $(TESTSUBDIRS:%=%/__crosstest__)
+
+testclean:: $(TESTSUBDIRS:%=%/__testclean__)
+
+.PHONY: check test testclean crosstest $(TESTSUBDIRS:%=%/__test__) $(TESTSUBDIRS:%=%/__crosstest__) $(TESTSUBDIRS:%=%/__testclean__) 
+
+# Rules for auto documentation
+
+$(DOCSUBDIRS:%=%/__man__): dummy
+	@cd `dirname $@` && $(MAKE) man
+
+$(DOCSUBDIRS:%=%/__doc_html__): dummy
+	@cd `dirname $@` && $(MAKE) doc-html
+
+$(DOCSUBDIRS:%=%/__doc_sgml__): dummy
+	@cd `dirname $@` && $(MAKE) doc-sgml
+
+man: $(DOCSUBDIRS:%=%/__man__)
+doc-html: $(DOCSUBDIRS:%=%/__doc_html__)
+doc-sgml: $(DOCSUBDIRS:%=%/__doc_sgml__)
+
+.PHONY: man doc-html doc-sgml $(DOCSUBDIRS:%=%/__man__) $(DOCSUBDIRS:%=%/__doc_html__) $(DOCSUBDIRS:%=%/__doc_sgml__)
+
+# Misc. rules
+
+$(MC_SRCS:.mc=.mc.rc): $(WMC)
+
+$(IDL_GEN_HEADERS) $(IDL_GEN_C_SRCS) $(IDL_TLB_SRCS:.idl=.tlb): $(WIDL)
+
+$(RC_SRCS:.rc=.res) $(RC_SRCS16:.rc=.res): $(WRC)
+
+$(SUBDIRS): dummy
+	@cd $@ && $(MAKE)
+
+dummy:
+
+.PHONY: dummy $(SUBDIRS)
+
+# End of global rules
+
+# Rules for .so files
+
+$(MODULE).so: $(MAINSPEC) $(ALL_OBJS) Makefile.in
+	$(WINEGCC) -B$(TOOLSDIR)/tools/winebuild -shared $(SRCDIR)/$(MAINSPEC) $(ALL_OBJS) $(EXTRADLLFLAGS) -o $@ $(DELAYIMPORTS:%=-l%) $(IMPORTS:%=-l%) $(DELAYIMPORTS:%=-Wb,-d%) $(ALL_LIBS)
+
+# Rules for .dll files
+
+$(MODULE): $(RCOBJS) $(OBJS) $(SPEC_DEF) Makefile.in
+	$(DLLWRAP) -k --def $(SPEC_DEF) -o $@ $(RCOBJS) $(OBJS) $(DLL_LDPATH) $(DELAYIMPORTS:%=-l%) $(IMPORTS:%=-l%) $(LIBWINE) $(ALL_LIBS)
+
+# Rules for import libraries
+
+.PHONY: implib $(IMPLIB_SRCS:%=__static_implib__%)
+
+all implib: $(IMPORTLIBFILE) $(IMPLIB_SRCS:%=__static_implib__%)
+
+$(IMPLIB_SRCS:%=__static_implib__%): $(STATICIMPLIB)
+
+$(SPEC_DEF) $(IMPORTLIB:%=lib%.def): $(MAINSPEC)
+	$(WINEBUILD) -w --def -o $@ --export $(SRCDIR)/$(MAINSPEC)
+
+$(IMPORTLIB:%=lib%.def.a): $(IMPLIB_OBJS)
+	$(RM) $@
+	$(AR) $(ARFLAGS) $@ $(IMPLIB_OBJS)
+	$(RANLIB) $@
+
+$(IMPORTLIB:%=lib%.a): $(SPEC_DEF) $(IMPLIB_OBJS)
+	$(DLLTOOL) -k -l $@ -d $(SPEC_DEF)
+	$(MINGWAR) rs $@ $(IMPLIB_OBJS)
+
+$(SUBDIRS): implib
+
+# Rules for testing
+
+check test:: $(SUBDIRS:%=%/__test__)
+
+crosstest:: $(SUBDIRS:%=%/__crosstest__)
+
+# Rules for auto documentation
+
+man: $(C_SRCS) dummy
+	$(C2MAN) -o $(TOPOBJDIR)/documentation/man$(api_manext) -R$(TOPOBJDIR) -C$(SRCDIR) -S$(api_manext) $(INCLUDES) $(MAINSPEC:%=-w %) $(SPEC_SRCS16:%=-w %) $(C_SRCS) $(C_SRCS16)
+
+doc-html: $(C_SRCS) dummy
+	$(C2MAN) -o $(TOPOBJDIR)/documentation/html -R$(TOPOBJDIR) -C$(SRCDIR) $(INCLUDES) -Th $(MAINSPEC:%=-w %) $(SPEC_SRCS16:%=-w %) $(C_SRCS) $(C_SRCS16)
+
+doc-sgml: $(C_SRCS) dummy
+	$(C2MAN) -o $(TOPOBJDIR)/documentation/api-guide -R$(TOPOBJDIR) -C$(SRCDIR) $(INCLUDES) -Ts $(MAINSPEC:%=-w %) $(SPEC_SRCS16:%=-w %) $(C_SRCS) $(C_SRCS16)
+
+.PHONY: man doc-html doc-sgml
+
+# Rules for installation
+
+.PHONY: install_static_implib_def install_static_implib_a
+.PHONY: $(IMPORTLIB:%=_install_/%) $(IMPLIB_SRCS:%=_install_static_implib_/%)
+
+$(IMPORTLIB:%=_install_/%): $(IMPORTLIBFILE) $(DESTDIR)$(dlldir) dummy
+	$(INSTALL_DATA) $(IMPORTLIBFILE) $(DESTDIR)$(dlldir)/$(IMPORTLIBFILE)
+
+install_static_implib_def: $(STATICIMPLIB) $(DESTDIR)$(dlldir) dummy
+	$(INSTALL_DATA) $(STATICIMPLIB) $(DESTDIR)$(dlldir)/$(STATICIMPLIB)
+
+install_static_implib_a:
+
+$(IMPLIB_SRCS:%=_install_static_implib_/%): install_static_implib_$(IMPLIBEXT)
+
+install install-lib:: $(MODULE)$(DLLEXT) $(DESTDIR)$(dlldir) dummy
+	$(INSTALL_PROGRAM) $(MODULE)$(DLLEXT) $(DESTDIR)$(dlldir)/$(MODULE)$(DLLEXT)
+
+install install-dev:: $(IMPORTLIB:%=_install_/%) $(IMPLIB_SRCS:%=_install_static_implib_/%)
+
+uninstall::
+	-cd $(DESTDIR)$(dlldir) && $(RM) $(MODULE)$(DLLEXT) $(IMPORTLIBFILE) $(STATICIMPLIB)
+
+# Misc. rules
+
+clean::
+	$(RM) $(SPEC_DEF) $(IMPORTLIBFILE)
+
+$(SPEC_DEF) $(SPEC_SRCS16:.spec=.spec.o): $(WINEBUILD)
+
+# End of global dll rules
+
+### Dependencies:
+cproxy.o: cproxy.c ../../include/windef.h ../../include/winnt.h \
+ ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/objbase.h ../../include/rpc.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/excpt.h ../../include/wingdi.h ../../include/winuser.h \
+ ../../include/winnls.h ../../include/wincon.h ../../include/winreg.h \
+ ../../include/reason.h ../../include/winnetwk.h ../../include/cderr.h \
+ ../../include/dde.h ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/oleauto.h \
+ ../../include/oaidl.h ../../include/rpcndr.h ../../include/objidl.h \
+ ../../include/unknwn.h ../../include/wtypes.h ../../include/oleidl.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/servprov.h ../../include/msxml.h \
+ ../../include/propidl.h ../../include/rpcproxy.h cpsf.h ndr_misc.h \
+ ../../include/wine/debug.h
+cpsf.o: cpsf.c ../../include/config.h ../../include/wine/port.h \
+ ../../include/windef.h ../../include/winnt.h ../../include/basetsd.h \
+ ../../include/guiddef.h ../../include/pshpack2.h \
+ ../../include/poppack.h ../../include/pshpack8.h \
+ ../../include/pshpack4.h ../../include/winbase.h \
+ ../../include/winerror.h ../../include/winreg.h \
+ ../../include/reason.h ../../include/objbase.h ../../include/rpc.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/winnls.h ../../include/wincon.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/oleauto.h \
+ ../../include/oaidl.h ../../include/rpcndr.h ../../include/objidl.h \
+ ../../include/unknwn.h ../../include/wtypes.h ../../include/oleidl.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/servprov.h ../../include/msxml.h \
+ ../../include/propidl.h ../../include/rpcproxy.h \
+ ../../include/wine/debug.h cpsf.h
+cstub.o: cstub.c ../../include/config.h ../../include/wine/port.h \
+ ../../include/windef.h ../../include/winnt.h ../../include/basetsd.h \
+ ../../include/guiddef.h ../../include/pshpack2.h \
+ ../../include/poppack.h ../../include/pshpack8.h \
+ ../../include/pshpack4.h ../../include/winbase.h \
+ ../../include/winerror.h ../../include/excpt.h \
+ ../../include/objbase.h ../../include/rpc.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/wingdi.h ../../include/winuser.h ../../include/winnls.h \
+ ../../include/wincon.h ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/oleauto.h \
+ ../../include/oaidl.h ../../include/rpcndr.h ../../include/objidl.h \
+ ../../include/unknwn.h ../../include/wtypes.h ../../include/oleidl.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/servprov.h ../../include/msxml.h \
+ ../../include/propidl.h ../../include/rpcproxy.h \
+ ../../include/wine/debug.h ../../include/wine/exception.h cpsf.h
+ndr_clientserver.o: ndr_clientserver.c ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/objbase.h ../../include/rpc.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/excpt.h ../../include/wingdi.h ../../include/winuser.h \
+ ../../include/winnls.h ../../include/wincon.h ../../include/winreg.h \
+ ../../include/reason.h ../../include/winnetwk.h ../../include/cderr.h \
+ ../../include/dde.h ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/oleauto.h \
+ ../../include/oaidl.h ../../include/rpcndr.h ../../include/objidl.h \
+ ../../include/unknwn.h ../../include/wtypes.h ../../include/oleidl.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/servprov.h ../../include/msxml.h \
+ ../../include/propidl.h ../../include/rpcproxy.h \
+ ../../include/wine/debug.h ndr_misc.h
+ndr_contexthandle.o: ndr_contexthandle.c ndr_misc.h \
+ ../../include/windef.h ../../include/winnt.h ../../include/basetsd.h \
+ ../../include/guiddef.h ../../include/pshpack2.h \
+ ../../include/poppack.h ../../include/pshpack8.h \
+ ../../include/pshpack4.h ../../include/winbase.h \
+ ../../include/winerror.h ../../include/rpc.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/excpt.h ../../include/wingdi.h ../../include/winuser.h \
+ ../../include/winnls.h ../../include/wincon.h ../../include/winreg.h \
+ ../../include/reason.h ../../include/winnetwk.h ../../include/cderr.h \
+ ../../include/dde.h ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h rpc_assoc.h rpc_binding.h \
+ ../../include/security.h ../../include/sspi.h ../../include/secext.h \
+ ../../include/wine/list.h ../../include/wine/rpcfc.h \
+ ../../include/wine/debug.h
+ndr_es.o: ndr_es.c ../../include/windef.h ../../include/winnt.h \
+ ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h ../../include/rpc.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/winnls.h ../../include/wincon.h \
+ ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/midles.h \
+ ../../include/ndrtypes.h ndr_misc.h ndr_stubless.h \
+ ../../include/wine/debug.h ../../include/wine/rpcfc.h
+ndr_fullpointer.o: ndr_fullpointer.c ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h ../../include/rpc.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/winnls.h ../../include/wincon.h \
+ ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/wine/debug.h
+ndr_marshall.o: ndr_marshall.c ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h ndr_misc.h \
+ ../../include/rpc.h ../../include/windows.h ../../include/winresrc.h \
+ ../../include/dlgs.h ../../include/winver.h ../../include/excpt.h \
+ ../../include/wingdi.h ../../include/winuser.h ../../include/winnls.h \
+ ../../include/wincon.h ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/wine/unicode.h \
+ ../../include/wine/rpcfc.h ../../include/wine/debug.h
+ndr_ole.o: ndr_ole.c ../../include/windef.h ../../include/winnt.h \
+ ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/objbase.h ../../include/rpc.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/excpt.h ../../include/wingdi.h ../../include/winuser.h \
+ ../../include/winnls.h ../../include/wincon.h ../../include/winreg.h \
+ ../../include/reason.h ../../include/winnetwk.h ../../include/cderr.h \
+ ../../include/dde.h ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/oleauto.h \
+ ../../include/oaidl.h ../../include/rpcndr.h ../../include/objidl.h \
+ ../../include/unknwn.h ../../include/wtypes.h ../../include/oleidl.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/servprov.h ../../include/msxml.h \
+ ../../include/propidl.h ndr_misc.h ../../include/rpcproxy.h \
+ ../../include/wine/rpcfc.h cpsf.h ../../include/wine/debug.h
+ndr_stubless.o: ndr_stubless.c ../../include/config.h \
+ ../../include/wine/port.h ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/objbase.h ../../include/rpc.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/excpt.h ../../include/wingdi.h ../../include/winuser.h \
+ ../../include/winnls.h ../../include/wincon.h ../../include/winreg.h \
+ ../../include/reason.h ../../include/winnetwk.h ../../include/cderr.h \
+ ../../include/dde.h ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/oleauto.h \
+ ../../include/oaidl.h ../../include/rpcndr.h ../../include/objidl.h \
+ ../../include/unknwn.h ../../include/wtypes.h ../../include/oleidl.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/servprov.h ../../include/msxml.h \
+ ../../include/propidl.h ../../include/rpcproxy.h \
+ ../../include/wine/exception.h ../../include/wine/debug.h \
+ ../../include/wine/rpcfc.h cpsf.h ndr_misc.h ndr_stubless.h \
+ ../../include/ndrtypes.h
+rpc_assoc.o: rpc_assoc.c ../../include/rpc.h ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/winnls.h ../../include/wincon.h \
+ ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/winternl.h \
+ ../../include/wine/unicode.h ../../include/wine/debug.h rpc_binding.h \
+ ../../include/security.h ../../include/sspi.h ../../include/secext.h \
+ ../../include/wine/list.h rpc_assoc.h rpc_message.h rpc_defs.h
+rpc_async.o: rpc_async.c ../../include/rpc.h ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/winnls.h ../../include/wincon.h \
+ ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/wine/debug.h rpc_binding.h \
+ ../../include/security.h ../../include/sspi.h ../../include/secext.h \
+ ../../include/wine/list.h rpc_message.h rpc_defs.h
+rpc_binding.o: rpc_binding.c ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/winnls.h ../../include/winternl.h \
+ ../../include/wine/unicode.h ../../include/rpc.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/wincon.h ../../include/winreg.h \
+ ../../include/reason.h ../../include/winnetwk.h ../../include/cderr.h \
+ ../../include/dde.h ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/wine/debug.h rpc_binding.h \
+ ../../include/security.h ../../include/sspi.h ../../include/secext.h \
+ ../../include/wine/list.h rpc_assoc.h
+rpc_epmap.o: rpc_epmap.c ../../include/windef.h ../../include/winnt.h \
+ ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h ../../include/rpc.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/winnls.h ../../include/wincon.h \
+ ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/wine/debug.h \
+ ../../include/wine/exception.h rpc_binding.h ../../include/security.h \
+ ../../include/sspi.h ../../include/secext.h ../../include/wine/list.h \
+ epm.h epm_towers.h
+rpc_message.o: rpc_message.c ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/winuser.h ../../include/rpc.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/excpt.h ../../include/wingdi.h ../../include/winnls.h \
+ ../../include/wincon.h ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/wine/debug.h rpc_binding.h \
+ ../../include/security.h ../../include/sspi.h ../../include/secext.h \
+ ../../include/wine/list.h rpc_defs.h rpc_message.h ncastatus.h
+rpc_server.o: rpc_server.c ../../include/config.h \
+ ../../include/wine/port.h ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h ../../include/rpc.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/winnls.h ../../include/wincon.h \
+ ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/wine/debug.h \
+ ../../include/wine/exception.h rpc_server.h rpc_binding.h \
+ ../../include/security.h ../../include/sspi.h ../../include/secext.h \
+ ../../include/wine/list.h rpc_assoc.h rpc_message.h rpc_defs.h \
+ ncastatus.h
+rpc_transport.o: rpc_transport.c ../../include/config.h \
+ ../../include/ws2tcpip.h ../../include/winsock2.h \
+ ../../include/winsock.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/excpt.h ../../include/windef.h ../../include/winnt.h \
+ ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/wingdi.h ../../include/winuser.h ../../include/winnls.h \
+ ../../include/wincon.h ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/rpc.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/shellapi.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/winternl.h \
+ ../../include/wine/unicode.h ../../include/wine/debug.h rpc_binding.h \
+ ../../include/security.h ../../include/sspi.h ../../include/secext.h \
+ ../../include/wine/list.h rpc_message.h rpc_defs.h rpc_server.h \
+ epm_towers.h epm.h
+rpcrt4_main.o: rpcrt4_main.c ../../include/config.h \
+ ../../include/ntstatus.h ../../include/windef.h ../../include/winnt.h \
+ ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winerror.h ../../include/winbase.h \
+ ../../include/winuser.h ../../include/winternl.h \
+ ../../include/iptypes.h ../../include/iphlpapi.h \
+ ../../include/iprtrmib.h ../../include/mprapi.h \
+ ../../include/lmcons.h ../../include/ras.h ../../include/ipifcons.h \
+ ../../include/ipexport.h ../../include/wine/unicode.h \
+ ../../include/winnls.h ../../include/rpc.h ../../include/windows.h \
+ ../../include/winresrc.h ../../include/dlgs.h ../../include/winver.h \
+ ../../include/excpt.h ../../include/wingdi.h ../../include/wincon.h \
+ ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h ../../include/rpcproxy.h rpc_binding.h \
+ ../../include/security.h ../../include/sspi.h ../../include/secext.h \
+ ../../include/wine/list.h ../../include/wine/debug.h
+version.res: version.rc ../../include/wine/wine_common_ver.rc \
+ ../../include/windef.h ../../include/winnt.h ../../include/basetsd.h \
+ ../../include/guiddef.h ../../include/pshpack2.h \
+ ../../include/poppack.h ../../include/pshpack8.h \
+ ../../include/pshpack4.h ../../include/winbase.h \
+ ../../include/winerror.h ../../include/winver.h
+epm.h epm_c.c: epm.idl ../../include/wine/epm.idl \
+ ../../include/wine/dcetypes.idl ../../include/wtypes.idl \
+ ../../include/basetsd.h ../../include/guiddef.h
+epm_c.o: epm_c.c epm.h ../../include/rpc.h ../../include/windef.h \
+ ../../include/winnt.h ../../include/basetsd.h ../../include/guiddef.h \
+ ../../include/pshpack2.h ../../include/poppack.h \
+ ../../include/pshpack8.h ../../include/pshpack4.h \
+ ../../include/winbase.h ../../include/winerror.h \
+ ../../include/windows.h ../../include/winresrc.h ../../include/dlgs.h \
+ ../../include/winver.h ../../include/excpt.h ../../include/wingdi.h \
+ ../../include/winuser.h ../../include/winnls.h ../../include/wincon.h \
+ ../../include/winreg.h ../../include/reason.h \
+ ../../include/winnetwk.h ../../include/cderr.h ../../include/dde.h \
+ ../../include/ddeml.h ../../include/lzexpand.h \
+ ../../include/mmsystem.h ../../include/pshpack1.h \
+ ../../include/nb30.h ../../include/shellapi.h \
+ ../../include/winsock2.h ../../include/winsock.h \
+ ../../include/wincrypt.h ../../include/bcrypt.h \
+ ../../include/winspool.h ../../include/ole2.h ../../include/objbase.h \
+ ../../include/rpcndr.h ../../include/wtypes.h ../../include/unknwn.h \
+ ../../include/objidl.h ../../include/cguid.h ../../include/urlmon.h \
+ ../../include/oleidl.h ../../include/servprov.h ../../include/msxml.h \
+ ../../include/oaidl.h ../../include/propidl.h ../../include/oleauto.h \
+ ../../include/commdlg.h ../../include/prsht.h ../../include/winsvc.h \
+ ../../include/mcx.h ../../include/imm.h ../../include/rpcdce.h \
+ ../../include/rpcdcep.h ../../include/rpcnterr.h \
+ ../../include/rpcasync.h

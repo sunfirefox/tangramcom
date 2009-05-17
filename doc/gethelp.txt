@@ -1,0 +1,6 @@
+code hosting:
+	http://code.google.com/p/tangramcom/downloads/list
+
+wiki:
+	http://sites.google.com/site/tangramcom/
+	http://www.andjoin.com

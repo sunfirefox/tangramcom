@@ -1,0 +1,84 @@
+
+用法：
+
+编写日志语句：在每个需要的调试的文件中，定义默认channel,然后你就可以按照下列格式使用调试语句了
+				AGRLOG_DEFAULT_DEBUG_CHANNEL(ipccom)
+				AGRLOG_TRACE("connection: %p\n", Connection);
+			
+			如果源文件中包括多个channel,那就是用  和 TRACE_语句来编写调试语句
+				AGRLOG_DECLARE_DEBUG_CHANNEL(accel)
+				AGRLOG_TRACE_(accel)("incorrect SHIFT/CTRL/ALT-state\n");
+				
+				
+基本功能：
+1)channel
+2)class 代表严重程度
+3)辅助输出信息: 应用名  进程号  线程号  时间  channel
+4)辅助信息格式:
+5)配置项:	输出信息格式，class flag,channel 
+6)配置方式:	全局环境变量,每个进程相关的环境变量
+			全局配置文件,每个进程相关的配置文件
+			
+7)运行时开销: 如果在DLL中使用了AGRLOG，但应用不希望使能日志，那么，运行时开销应当尽量小
+
+
+环境变量:
+过滤条件 AGRLOGDEBUG
+
+		"Syntax of the AGRLOGDEBUG variable:\n"
+		"  AGRLOGDEBUG=[class]+xxx,[class]-yyy,...\n\n"
+		"Example: AGRLOGDEBUG=+all,warn-heap\n"
+		"    turns on all messages except warning heap messages\n"
+		"Available message classes: err, warn, fixme, trace\n";
+
+		
+输出格式 AGRLOGDEBUG_FORMAT
+		
+		N name
+		P pid
+		T tid
+		t time
+		d date
+		C channel
+		c class
+		F func
+		[d][t][N][P][T][c][C][F]
+
+
+
+在windows上
+	设置环境变量
+		set AGRLOGDEBUG_FORMAT=[d][t][N][P][T][c][C][F]
+		set AGRLOGDEBUG_FORMAT=dtNPTcCF
+		set AGRLOGDEBUG_FORMAT=N/C
+	查看环境变量
+		set	//查看所有环境变量
+		set AGRLOGDEBUG_FORMAT
+
+在Linux上
+	设置环境变量
+		本shell私有的环境变量 
+			AGRLOGDEBUG_FORMAT=dtNPTcCF
+		用户的环境变量
+			export AGRLOGDEBUG_FORMAT=dtNPTcCF
+	
+	查看环境变量
+		export	//查看所有环境变量
+		env		//显示用户的环境变量
+		echo $AGRLOGDEBUG_FORMAT
+
+
+
+------------------------------------------------------------
+todo:
+全局配置文件
+进程相关的配置文件
+配置文件路径
+//如果环境变量AGRLOGDEBUG_CONF_FILE非空，那么应该读取此配置文件
+//此配置文件可以配置以下项目:
+//1)AGRLOGDEBUG
+//2)AGRLOGDEBUG_FORMAT
+//3)Process AGRLOGDEBUG
+//3)Process AGRLOGDEBUG
+
+

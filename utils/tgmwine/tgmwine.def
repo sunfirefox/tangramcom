@@ -1,0 +1,126 @@
+; File generated automatically from ./rpcrt4.spec; do not edit!
+
+LIBRARY libtgmwine.dll
+
+EXPORTS
+	;AcquireCredentialsHandleA
+	;AcquireCredentialsHandleW
+	;FreeCredentialsHandle
+	;EnumerateSecurityPackagesA
+	;EnumerateSecurityPackagesW
+	;EncryptMessage
+	;DecryptMessage
+	;InitializeSecurityContextA
+	;InitializeSecurityContextW
+	;CompleteAuthToken
+	;DeleteSecurityContext
+	;ApplyControlToken
+	;QueryContextAttributesA
+	;QueryContextAttributesW
+	;MakeSignature
+	;VerifySignature
+	;FreeContextBuffer
+	;GetAdaptersInfo
+	RtlCreateUnicodeString
+	RtlCreateUnicodeStringFromAsciiz
+	RtlFreeUnicodeString PRIVATE
+	;RtlAcquireResourceExclusive
+	;RtlDeleteResource
+	;RtlInitializeResource
+	;RtlReleaseResource
+	RegDeleteTreeW
+	RtlLargeIntegerAdd
+  
+	InitializeCriticalSection
+	EnterCriticalSection
+	LeaveCriticalSection
+	DeleteCriticalSection
+	
+	
+	;HeapAlloc
+	;HeapFree
+	;HeapReAlloc
+	;HeapSize
+	
+	RegOpenKeyA
+	RegOpenKeyW
+	RegOpenKeyExA
+	RegOpenKeyExW
+	RegCreateKeyA
+	RegCreateKeyW
+	RegCreateKeyExA
+	RegCreateKeyExW
+	RegSetValueA
+	RegSetValueW
+	RegSetValueExA
+	RegSetValueExW
+	RegCloseKey
+	RegEnumKeyA
+	RegEnumKeyW
+	RegEnumKeyExA
+	RegEnumKeyExW
+	RegDeleteKeyA
+	RegDeleteKeyA
+	RegQueryValueA
+	RegQueryValueW
+	RegQueryValueExA
+	RegQueryValueExW
+	;RegQueryInfoKeyW
+	
+	
+	Agr_CreateEvent
+	Agr_SetEvent
+	Agr_WaitEvent
+	Agr_CloseEvent
+	
+	agr_strcpy_ctow
+	agr_strncpy_ctow
+	agr_strcpy_wtoc
+	agr_strncpy_wtoc
+	
+	Agr_CreateMutex
+	Agr_LockMutex
+	Agr_UnlockMutex
+	Agr_CloseMutex
+	
+	    atoiW
+    atolW
+    get_char_typeW
+    isalnumW
+    isalphaW
+    iscntrlW
+    isdigitW
+    isgraphW
+    islowerW
+    isprintW
+    ispunctW
+    isspaceW
+    isupperW
+    isxdigitW
+    memchrW
+    memicmpW
+    memrchrW
+    snprintfW
+    sprintfW
+    strcatW
+    strchrW
+    strcmpW
+    strcmpiW
+    strcpyW
+    strcspnW
+    strlenW
+    strlwrW
+    strncmpW
+    strncmpiW
+    strpbrkW
+    strrchrW
+    strspnW
+    strstrW
+    strtolW
+    strtoulW
+    struprW
+    tolowerW
+    toupperW
+    vsnprintfW
+    vsprintfW
+

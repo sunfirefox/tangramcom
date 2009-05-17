@@ -1,0 +1,116 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libCommonUtilities", "utils\CommonUtilitiesLib\CommonUtilitiesLib.vcproj", "{892644B6-06BD-4802-BC1C-5CD3183876DF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55} = {A6026D94-87FF-48C1-8DEA-235F9D6FBF55}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "inc_winheaders", "include\winheaders\winheaders.vcproj", "{9AB56DFD-321E-4E46-BC97-63A40A32E899}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtgmlog", "utils\tgmlog\tgmlog.vcproj", "{A6026D94-87FF-48C1-8DEA-235F9D6FBF55}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtgmole32", "tangram\ole32\tgmole32.vcproj", "{3BD56CE7-08BE-42FC-9D20-CE4A52537023}"
+	ProjectSection(ProjectDependencies) = postProject
+		{84260006-064C-44CB-8277-30A0E09AA5FA} = {84260006-064C-44CB-8277-30A0E09AA5FA}
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55} = {A6026D94-87FF-48C1-8DEA-235F9D6FBF55}
+		{892644B6-06BD-4802-BC1C-5CD3183876DF} = {892644B6-06BD-4802-BC1C-5CD3183876DF}
+		{DBE73DC0-0E26-4FE0-8428-96C8F130DC50} = {DBE73DC0-0E26-4FE0-8428-96C8F130DC50}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtgmrpcrt4", "tangram\rpcrt4\os_rpcrt4.vcproj", "{DBE73DC0-0E26-4FE0-8428-96C8F130DC50}"
+	ProjectSection(ProjectDependencies) = postProject
+		{84260006-064C-44CB-8277-30A0E09AA5FA} = {84260006-064C-44CB-8277-30A0E09AA5FA}
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55} = {A6026D94-87FF-48C1-8DEA-235F9D6FBF55}
+		{892644B6-06BD-4802-BC1C-5CD3183876DF} = {892644B6-06BD-4802-BC1C-5CD3183876DF}
+		{4DAC82E4-602B-41D7-B2CB-6C3BAA491486} = {4DAC82E4-602B-41D7-B2CB-6C3BAA491486}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tgmscm_com", "tangram\scm\scm_client\tgmscm_client.vcproj", "{32F13A20-3D2F-49E8-8212-173AF9F4AA77}"
+	ProjectSection(ProjectDependencies) = postProject
+		{84260006-064C-44CB-8277-30A0E09AA5FA} = {84260006-064C-44CB-8277-30A0E09AA5FA}
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55} = {A6026D94-87FF-48C1-8DEA-235F9D6FBF55}
+		{892644B6-06BD-4802-BC1C-5CD3183876DF} = {892644B6-06BD-4802-BC1C-5CD3183876DF}
+		{DBE73DC0-0E26-4FE0-8428-96C8F130DC50} = {DBE73DC0-0E26-4FE0-8428-96C8F130DC50}
+		{3BD56CE7-08BE-42FC-9D20-CE4A52537023} = {3BD56CE7-08BE-42FC-9D20-CE4A52537023}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tgmscm_daemon", "tangram\scm\scm_daemon\tgmscm_daemon.vcproj", "{24793175-0787-48A9-9E40-A84FF461DE47}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55} = {A6026D94-87FF-48C1-8DEA-235F9D6FBF55}
+		{892644B6-06BD-4802-BC1C-5CD3183876DF} = {892644B6-06BD-4802-BC1C-5CD3183876DF}
+		{4DAC82E4-602B-41D7-B2CB-6C3BAA491486} = {4DAC82E4-602B-41D7-B2CB-6C3BAA491486}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtgmwine", "utils\tgmwine\tgmwine.vcproj", "{84260006-064C-44CB-8277-30A0E09AA5FA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55} = {A6026D94-87FF-48C1-8DEA-235F9D6FBF55}
+		{892644B6-06BD-4802-BC1C-5CD3183876DF} = {892644B6-06BD-4802-BC1C-5CD3183876DF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tgmrpc_com", "tangram\trpc\tgmrpc.vcproj", "{4DAC82E4-602B-41D7-B2CB-6C3BAA491486}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "inc_tgmtl", "include\tgmtl\tgmtl.vcproj", "{66EA49A4-9ACD-42A7-B59F-C21E20C34415}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{892644B6-06BD-4802-BC1C-5CD3183876DF}.Debug.ActiveCfg = Debug|Win32
+		{892644B6-06BD-4802-BC1C-5CD3183876DF}.Debug.Build.0 = Debug|Win32
+		{892644B6-06BD-4802-BC1C-5CD3183876DF}.Release.ActiveCfg = Release|Win32
+		{892644B6-06BD-4802-BC1C-5CD3183876DF}.Release.Build.0 = Release|Win32
+		{9AB56DFD-321E-4E46-BC97-63A40A32E899}.Debug.ActiveCfg = Debug|Win32
+		{9AB56DFD-321E-4E46-BC97-63A40A32E899}.Release.ActiveCfg = Release|Win32
+		{9AB56DFD-321E-4E46-BC97-63A40A32E899}.Release.Build.0 = Release|Win32
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55}.Debug.ActiveCfg = Debug|Win32
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55}.Debug.Build.0 = Debug|Win32
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55}.Release.ActiveCfg = Release|Win32
+		{A6026D94-87FF-48C1-8DEA-235F9D6FBF55}.Release.Build.0 = Release|Win32
+		{3BD56CE7-08BE-42FC-9D20-CE4A52537023}.Debug.ActiveCfg = Debug|Win32
+		{3BD56CE7-08BE-42FC-9D20-CE4A52537023}.Debug.Build.0 = Debug|Win32
+		{3BD56CE7-08BE-42FC-9D20-CE4A52537023}.Release.ActiveCfg = Release|Win32
+		{3BD56CE7-08BE-42FC-9D20-CE4A52537023}.Release.Build.0 = Release|Win32
+		{DBE73DC0-0E26-4FE0-8428-96C8F130DC50}.Debug.ActiveCfg = Debug|Win32
+		{DBE73DC0-0E26-4FE0-8428-96C8F130DC50}.Debug.Build.0 = Debug|Win32
+		{DBE73DC0-0E26-4FE0-8428-96C8F130DC50}.Release.ActiveCfg = Release|Win32
+		{DBE73DC0-0E26-4FE0-8428-96C8F130DC50}.Release.Build.0 = Release|Win32
+		{32F13A20-3D2F-49E8-8212-173AF9F4AA77}.Debug.ActiveCfg = Debug|Win32
+		{32F13A20-3D2F-49E8-8212-173AF9F4AA77}.Debug.Build.0 = Debug|Win32
+		{32F13A20-3D2F-49E8-8212-173AF9F4AA77}.Release.ActiveCfg = Release|Win32
+		{32F13A20-3D2F-49E8-8212-173AF9F4AA77}.Release.Build.0 = Release|Win32
+		{24793175-0787-48A9-9E40-A84FF461DE47}.Debug.ActiveCfg = Debug|Win32
+		{24793175-0787-48A9-9E40-A84FF461DE47}.Debug.Build.0 = Debug|Win32
+		{24793175-0787-48A9-9E40-A84FF461DE47}.Release.ActiveCfg = Release|Win32
+		{24793175-0787-48A9-9E40-A84FF461DE47}.Release.Build.0 = Release|Win32
+		{84260006-064C-44CB-8277-30A0E09AA5FA}.Debug.ActiveCfg = Debug|Win32
+		{84260006-064C-44CB-8277-30A0E09AA5FA}.Debug.Build.0 = Debug|Win32
+		{84260006-064C-44CB-8277-30A0E09AA5FA}.Release.ActiveCfg = Release|Win32
+		{84260006-064C-44CB-8277-30A0E09AA5FA}.Release.Build.0 = Release|Win32
+		{4DAC82E4-602B-41D7-B2CB-6C3BAA491486}.Debug.ActiveCfg = Debug|Win32
+		{4DAC82E4-602B-41D7-B2CB-6C3BAA491486}.Debug.Build.0 = Debug|Win32
+		{4DAC82E4-602B-41D7-B2CB-6C3BAA491486}.Release.ActiveCfg = Release|Win32
+		{4DAC82E4-602B-41D7-B2CB-6C3BAA491486}.Release.Build.0 = Release|Win32
+		{66EA49A4-9ACD-42A7-B59F-C21E20C34415}.Debug.ActiveCfg = Debug|Win32
+		{66EA49A4-9ACD-42A7-B59F-C21E20C34415}.Debug.Build.0 = Debug|Win32
+		{66EA49A4-9ACD-42A7-B59F-C21E20C34415}.Release.ActiveCfg = Release|Win32
+		{66EA49A4-9ACD-42A7-B59F-C21E20C34415}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		include\OSDataTypes.h = include\OSDataTypes.h
+		include\OSErrors.h = include\OSErrors.h
+		tangram\tgmcom_config.h = tangram\tgmcom_config.h
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

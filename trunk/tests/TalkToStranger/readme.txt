@@ -1,0 +1,1 @@
+D:\Work\Tangram\bin\win32\widl.exe -I D:\Work\Tangram\tools\widl\sys_include\wine\windows talk.idl

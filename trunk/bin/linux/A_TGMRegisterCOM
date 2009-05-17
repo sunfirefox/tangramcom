@@ -1,0 +1,9 @@
+#!/bin/sh
+
+./tgmregsvr32 libtgmole32.so
+./tgmregsvr32 libtgmrpc_com.so
+./tgmregsvr32 libtgmscm_com.so
+./tgmregsvr32 libtalk_ps.so
+./talk_server /REGSERVER
+
+

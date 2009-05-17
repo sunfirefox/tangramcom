@@ -1,0 +1,45 @@
+import "unknwn.idl";
+import "dcom.idl";
+
+[
+    object,
+	local,
+    uuid(03EE1F1B-7F8B-4fdb-860A-0295856CDB21)
+]
+interface ISCMClsFactoryResloveService : IUnknown
+{
+    HRESULT Register	([in]REFIID in_clsid,[in]int in_size,
+						[in,size_is(in_size)]unsigned char* in_data);
+	HRESULT Unregister	([in]REFIID in_clsid);
+	HRESULT Query		([in]REFIID in_clsid,[in]int in_size,
+						[out,size_is(in_size),length_is(*out_length)]unsigned char* out_data,int *out_length);
+}
+
+[
+    object,
+	local,
+    uuid(03EE1F1C-7F8B-4fdb-860A-0295856CDB21)
+]
+interface ISCMApartMentResloveService : IUnknown
+{
+    HRESULT Register	([in]OXID in_oxid,[in,string]const char* in_rrl);
+	HRESULT Unregister	([in]OXID in_oxid);
+	HRESULT Query		([in]OXID in_oxid,[in]int in_rrl_size,[out,size_is(in_rrl_size)]char * out_rrl);
+}
+
+[
+    uuid(15582959-3BBF-4926-8248-85F4B06629C1)
+]
+coclass SCMClsFactoryResloveService
+{
+    interface ISCMClsFactoryResloveService;
+}
+
+[
+    uuid(1558295A-3BBF-4926-8248-85F4B06629C1)
+]
+coclass SCMApartMentResloveService
+{
+    interface ISCMApartMentResloveService;
+}
+

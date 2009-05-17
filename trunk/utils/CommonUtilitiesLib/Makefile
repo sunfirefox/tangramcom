@@ -1,0 +1,239 @@
+
+############################################################################
+#
+#   Makefile for building : CommonUtilitiesLib.TMK3
+#   Created by TMK3_V2, please do not modify.
+#
+#############################################################################
+
+CC = gcc
+CXX = g++
+DEFINES = -D_TRANZDA_VM_ -DTGMCOMUTI_MAKEDLL
+INCLUDE_PATH = -I/usr/local/include \
+               -I. -I.. -I../../include -I../../include/LinuxSupport
+CC_FLAGS = -D_REENTRANT -D__USE_POSIX -D__linux__=1  -pipe  -g -Wall -W  -fvisibility=hidden $(DEFINES)
+CXX_FLAGS = -D_REENTRANT -D__USE_POSIX -D__linux__=1  -pipe  -g -Wall -W  -fvisibility=hidden -fno-rtti $(DEFINES)
+LIBS = -L/usr/local/lib -lpthread
+LINK = g++
+LINK_FLAGS = -shared -Wl,-soname,libCommonUtilities.so
+
+OBJECTS_DIR = ./DebugLinux
+DESTDIR = ../../bin/linux
+TARGET = $(DESTDIR)/libCommonUtilities.so
+
+DEL_FILE = rm -f
+MKDIR = mkdir -p
+
+first: all
+
+OBJECTS = \
+	$(OBJECTS_DIR)/atomic.o \
+	$(OBJECTS_DIR)/base64.o \
+	$(OBJECTS_DIR)/ConfParser.o \
+	$(OBJECTS_DIR)/daemon.o \
+	$(OBJECTS_DIR)/DateTranslator.o \
+	$(OBJECTS_DIR)/getopt.o \
+	$(OBJECTS_DIR)/GetWord.o \
+	$(OBJECTS_DIR)/IdleTask.o \
+	$(OBJECTS_DIR)/InternalStdLib.o \
+	$(OBJECTS_DIR)/MakeDir.o \
+	$(OBJECTS_DIR)/md5.o \
+	$(OBJECTS_DIR)/md5digest.o \
+	$(OBJECTS_DIR)/MyAssert.o \
+	$(OBJECTS_DIR)/OS.o \
+	$(OBJECTS_DIR)/OSBufferPool.o \
+	$(OBJECTS_DIR)/OSCodeFragment.o \
+	$(OBJECTS_DIR)/OSCond.o \
+	$(OBJECTS_DIR)/OSEventContext.o \
+	$(OBJECTS_DIR)/OSEventThread.o \
+	$(OBJECTS_DIR)/OSFileSource.o \
+	$(OBJECTS_DIR)/OSHeap.o \
+	$(OBJECTS_DIR)/OSMutex.o \
+	$(OBJECTS_DIR)/OSMutexRW.o \
+	$(OBJECTS_DIR)/OSQueue.o \
+	$(OBJECTS_DIR)/OSRef.o \
+	$(OBJECTS_DIR)/OSThread.o \
+	$(OBJECTS_DIR)/OSThreadPool.o \
+	$(OBJECTS_DIR)/QueryParamList.o \
+	$(OBJECTS_DIR)/ResizeableStringFormatter.o \
+	$(OBJECTS_DIR)/Socket.o \
+	$(OBJECTS_DIR)/SocketPair.o \
+	$(OBJECTS_DIR)/SocketUtils.o \
+	$(OBJECTS_DIR)/StringFormatter.o \
+	$(OBJECTS_DIR)/StringParser.o \
+	$(OBJECTS_DIR)/StringTranslator.o \
+	$(OBJECTS_DIR)/StrPtrLen.o \
+	$(OBJECTS_DIR)/Task.o \
+	$(OBJECTS_DIR)/TCPListenerSocket.o \
+	$(OBJECTS_DIR)/TCPSocket.o \
+	$(OBJECTS_DIR)/TimeoutTask.o \
+	$(OBJECTS_DIR)/Trim.o \
+	$(OBJECTS_DIR)/UDPDemuxer.o \
+	$(OBJECTS_DIR)/UDPSocket.o \
+	$(OBJECTS_DIR)/UDPSocketPool.o \
+	$(OBJECTS_DIR)/UnixListenerSocket.o \
+	$(OBJECTS_DIR)/UnixSocket.o \
+	$(OBJECTS_DIR)/UserAgentParser.o \
+	$(OBJECTS_DIR)/XMLParser.o
+
+ADD_OBJECTS = 
+
+$(OBJECTS_DIR) :
+	$(MKDIR) $(OBJECTS_DIR)
+
+$(DESTDIR) :
+	$(MKDIR) $(DESTDIR)
+
+all : $(OBJECTS_DIR) $(DESTDIR) $(TARGET)
+
+$(TARGET) : $(OBJECTS)
+	$(LINK) $(LINK_FLAGS) -o $(TARGET) $(OBJECTS) $(ADD_OBJECTS) $(LIBS)
+
+clean : 
+	-$(DEL_FILE) $(OBJECTS)
+	-$(DEL_FILE) $(TARGET)
+
+$(OBJECTS_DIR)/atomic.o : ./Sources/atomic.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/atomic.o ./Sources/atomic.cpp
+
+$(OBJECTS_DIR)/base64.o : ./Sources/base64.c
+	$(CC) -c $(CC_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/base64.o ./Sources/base64.c
+
+$(OBJECTS_DIR)/ConfParser.o : ./Sources/ConfParser.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/ConfParser.o ./Sources/ConfParser.cpp
+
+$(OBJECTS_DIR)/daemon.o : ./Sources/daemon.c
+	$(CC) -c $(CC_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/daemon.o ./Sources/daemon.c
+
+$(OBJECTS_DIR)/DateTranslator.o : ./Sources/DateTranslator.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/DateTranslator.o ./Sources/DateTranslator.cpp
+
+$(OBJECTS_DIR)/getopt.o : ./Sources/getopt.c
+	$(CC) -c $(CC_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/getopt.o ./Sources/getopt.c
+
+$(OBJECTS_DIR)/GetWord.o : ./Sources/GetWord.c
+	$(CC) -c $(CC_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/GetWord.o ./Sources/GetWord.c
+
+$(OBJECTS_DIR)/IdleTask.o : ./Sources/IdleTask.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/IdleTask.o ./Sources/IdleTask.cpp
+
+$(OBJECTS_DIR)/InternalStdLib.o : ./Sources/InternalStdLib.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/InternalStdLib.o ./Sources/InternalStdLib.cpp
+
+$(OBJECTS_DIR)/MakeDir.o : ./Sources/MakeDir.c
+	$(CC) -c $(CC_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/MakeDir.o ./Sources/MakeDir.c
+
+$(OBJECTS_DIR)/md5.o : ./Sources/md5.c
+	$(CC) -c $(CC_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/md5.o ./Sources/md5.c
+
+$(OBJECTS_DIR)/md5digest.o : ./Sources/md5digest.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/md5digest.o ./Sources/md5digest.cpp
+
+$(OBJECTS_DIR)/MyAssert.o : ./Sources/MyAssert.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/MyAssert.o ./Sources/MyAssert.cpp
+
+$(OBJECTS_DIR)/OS.o : ./Sources/OS.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OS.o ./Sources/OS.cpp
+
+$(OBJECTS_DIR)/OSBufferPool.o : ./Sources/OSBufferPool.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSBufferPool.o ./Sources/OSBufferPool.cpp
+
+$(OBJECTS_DIR)/OSCodeFragment.o : ./Sources/OSCodeFragment.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSCodeFragment.o ./Sources/OSCodeFragment.cpp
+
+$(OBJECTS_DIR)/OSCond.o : ./Sources/OSCond.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSCond.o ./Sources/OSCond.cpp
+
+$(OBJECTS_DIR)/OSEventContext.o : ./Sources/OSEventContext.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSEventContext.o ./Sources/OSEventContext.cpp
+
+$(OBJECTS_DIR)/OSEventThread.o : ./Sources/OSEventThread.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSEventThread.o ./Sources/OSEventThread.cpp
+
+$(OBJECTS_DIR)/OSFileSource.o : ./Sources/OSFileSource.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSFileSource.o ./Sources/OSFileSource.cpp
+
+$(OBJECTS_DIR)/OSHeap.o : ./Sources/OSHeap.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSHeap.o ./Sources/OSHeap.cpp
+
+$(OBJECTS_DIR)/OSMutex.o : ./Sources/OSMutex.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSMutex.o ./Sources/OSMutex.cpp
+
+$(OBJECTS_DIR)/OSMutexRW.o : ./Sources/OSMutexRW.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSMutexRW.o ./Sources/OSMutexRW.cpp
+
+$(OBJECTS_DIR)/OSQueue.o : ./Sources/OSQueue.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSQueue.o ./Sources/OSQueue.cpp
+
+$(OBJECTS_DIR)/OSRef.o : ./Sources/OSRef.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSRef.o ./Sources/OSRef.cpp
+
+$(OBJECTS_DIR)/OSThread.o : ./Sources/OSThread.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSThread.o ./Sources/OSThread.cpp
+
+$(OBJECTS_DIR)/OSThreadPool.o : ./Sources/OSThreadPool.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/OSThreadPool.o ./Sources/OSThreadPool.cpp
+
+$(OBJECTS_DIR)/QueryParamList.o : ./Sources/QueryParamList.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/QueryParamList.o ./Sources/QueryParamList.cpp
+
+$(OBJECTS_DIR)/ResizeableStringFormatter.o : ./Sources/ResizeableStringFormatter.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/ResizeableStringFormatter.o ./Sources/ResizeableStringFormatter.cpp
+
+$(OBJECTS_DIR)/Socket.o : ./Sources/Socket.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/Socket.o ./Sources/Socket.cpp
+
+$(OBJECTS_DIR)/SocketPair.o : ./Sources/SocketPair.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/SocketPair.o ./Sources/SocketPair.cpp
+
+$(OBJECTS_DIR)/SocketUtils.o : ./Sources/SocketUtils.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/SocketUtils.o ./Sources/SocketUtils.cpp
+
+$(OBJECTS_DIR)/StringFormatter.o : ./Sources/StringFormatter.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/StringFormatter.o ./Sources/StringFormatter.cpp
+
+$(OBJECTS_DIR)/StringParser.o : ./Sources/StringParser.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/StringParser.o ./Sources/StringParser.cpp
+
+$(OBJECTS_DIR)/StringTranslator.o : ./Sources/StringTranslator.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/StringTranslator.o ./Sources/StringTranslator.cpp
+
+$(OBJECTS_DIR)/StrPtrLen.o : ./Sources/StrPtrLen.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/StrPtrLen.o ./Sources/StrPtrLen.cpp
+
+$(OBJECTS_DIR)/Task.o : ./Sources/Task.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/Task.o ./Sources/Task.cpp
+
+$(OBJECTS_DIR)/TCPListenerSocket.o : ./Sources/TCPListenerSocket.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/TCPListenerSocket.o ./Sources/TCPListenerSocket.cpp
+
+$(OBJECTS_DIR)/TCPSocket.o : ./Sources/TCPSocket.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/TCPSocket.o ./Sources/TCPSocket.cpp
+
+$(OBJECTS_DIR)/TimeoutTask.o : ./Sources/TimeoutTask.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/TimeoutTask.o ./Sources/TimeoutTask.cpp
+
+$(OBJECTS_DIR)/Trim.o : ./Sources/Trim.c
+	$(CC) -c $(CC_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/Trim.o ./Sources/Trim.c
+
+$(OBJECTS_DIR)/UDPDemuxer.o : ./Sources/UDPDemuxer.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/UDPDemuxer.o ./Sources/UDPDemuxer.cpp
+
+$(OBJECTS_DIR)/UDPSocket.o : ./Sources/UDPSocket.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/UDPSocket.o ./Sources/UDPSocket.cpp
+
+$(OBJECTS_DIR)/UDPSocketPool.o : ./Sources/UDPSocketPool.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/UDPSocketPool.o ./Sources/UDPSocketPool.cpp
+
+$(OBJECTS_DIR)/UnixListenerSocket.o : ./Sources/UnixListenerSocket.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/UnixListenerSocket.o ./Sources/UnixListenerSocket.cpp
+
+$(OBJECTS_DIR)/UnixSocket.o : ./Sources/UnixSocket.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/UnixSocket.o ./Sources/UnixSocket.cpp
+
+$(OBJECTS_DIR)/UserAgentParser.o : ./Sources/UserAgentParser.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/UserAgentParser.o ./Sources/UserAgentParser.cpp
+
+$(OBJECTS_DIR)/XMLParser.o : ./Sources/XMLParser.cpp
+	$(CXX) -c $(CXX_FLAGS) $(INCLUDE_PATH) -o $(OBJECTS_DIR)/XMLParser.o ./Sources/XMLParser.cpp
+
